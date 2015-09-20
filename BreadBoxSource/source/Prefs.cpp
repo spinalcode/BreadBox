@@ -51,10 +51,10 @@ Prefs::Prefs()
 	ScalingDenominator = 2;
 
 
-	strcpy(DrivePath[0], "/rd/64prgs");
-	strcpy(DrivePath[1], "/rd/64prgs");
-	strcpy(DrivePath[2], "/rd/64prgs");
-	strcpy(DrivePath[3], "/rd/64prgs");
+	strcpy(DrivePath[0], "/c63/games/");
+	strcpy(DrivePath[1], "/c63/games/");
+	strcpy(DrivePath[2], "/c63/games/");
+	strcpy(DrivePath[3], "/c63/games/");
 
 	strcpy(ViewPort, "Default");
 	strcpy(DisplayMode, "Default");
@@ -84,6 +84,8 @@ Prefs::Prefs()
 	AlwaysCopy = false;
 	SystemKeys = true;
 	ShowLEDs = true;
+    
+    Prefs::Load("/c64/prefs.ini");
 }
 
 
@@ -243,7 +245,7 @@ void Prefs::Load(char *filename)
 				else if (!strcmp(keyword, "MapSlash"))
 					MapSlash = !strcmp(value, "TRUE");
 				else if (!strcmp(keyword, "Emul1541Proc"))
-					Emul1541Proc = !strcmp(value, "TRUE");
+					Emul1541Proc = !strcmp(value, "FALSE");
 				else if (!strcmp(keyword, "SIDFilters"))
 					SIDFilters = !strcmp(value, "TRUE");
 				else if (!strcmp(keyword, "DoubleScan"))
