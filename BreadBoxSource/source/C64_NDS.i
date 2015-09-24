@@ -306,7 +306,6 @@ uint8 C64::poll_joystick(int port)
 
 if(filesGot==1){
 	if(oldKeys != keys){
-        oldKeys = keys;
         if( keys & KEY_UP   && currentFile >0 ) { currentFile--; }
         if( keys & KEY_DOWN && currentFile <filesInList-1 ) { currentFile++; }
         if( keys & KEY_A ){ // load file
@@ -323,7 +322,23 @@ if(filesGot==1){
             delete prefs;
             this->PatchKernal(ThePrefs.FastReset, ThePrefs.Emul1541Proc);
             this->Reset();
-            kbd_buf_feed("LOAD\"*\",8,1\rRUN\r");
+            char clr[2]; clr[0]=147; clr[1]=0;
+            // throw some instructions on the screen!
+			char poop[150];
+			sprintf(poop,"%s WHILE HOLDING -R- TAP UP/DOWN TO MOVE   THE CURSOR TO THE FILE YOU WANT TO      LOAD THEN PRESS -A-",clr);
+            int len = strlen(poop);
+            poop[len] = 19;
+            int t=0;
+            for(t=1; t<5; t++){
+                poop[len+t] = 17;
+            }
+            poop[len+t] = 0;
+            
+
+            kbd_buf_feed("");
+            char output[200];
+			sprintf(output,"LOAD\"$\",8\r%sLIST\r",poop);
+			kbd_buf_feed(output);
         }
 
         // if.prg, load directly
@@ -403,8 +418,46 @@ if(filesGot==0){
 		space=1;
     }    
 */        
-    
+
+/* D-Pad = cursor keys when 'R' held */    
    
+	if(keys & KEY_R ){
+
+		if(keys & KEY_UP){
+            if(!(oldKeys & KEY_UP)){
+                char poop[2];
+                poop[0]=145;
+                poop[1]=0;
+                kbd_buf_feed(poop);
+            }
+		}
+	
+		if(keys & KEY_DOWN){
+            if(!(oldKeys & KEY_DOWN)){
+                char poop[2];
+                poop[0]=17; poop[1]=0; kbd_buf_feed(poop);
+            }
+        }
+        // load file on line
+		if(keys & KEY_A){
+            if(!(oldKeys & KEY_A)){
+			char poop[50];
+			char muuv[20];
+			muuv[0]= 29;		muuv[1]= 29;		muuv[2]= 29;		muuv[3]= 29;
+			muuv[4]= 29;		muuv[5]= 29;		muuv[6]= 29;		muuv[7]= 29;
+			muuv[8]= 29;		muuv[9]= 29;		muuv[10]=29;		muuv[11]=29;
+			muuv[12]=29;		muuv[13]=29;		muuv[14]=29;		muuv[15]=29;
+			muuv[16]=29;		muuv[17]=29;		muuv[18]=29;		muuv[19]=0;
+			char clr[2];
+			clr[0]=147;
+			clr[1]=0;
+			sprintf(poop,"LOAD%s,8,1     \r%s\rRUN\r",muuv,clr);
+			kbd_buf_feed(poop);
+            }
+        }
+    
+    
+    }
 
         
         
@@ -488,7 +541,7 @@ if(filesGot==0){
 } // dont have file list
     
     
-    
+    oldKeys = keys;
     
 	return j;
 }
